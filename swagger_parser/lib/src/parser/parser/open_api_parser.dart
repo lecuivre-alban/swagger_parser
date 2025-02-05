@@ -1161,7 +1161,11 @@ class OpenApiParser {
 
         // Create a base union class for the discriminated types
         final baseClassName =
-            '${additionalName ?? ''} ${name ?? ''} Union'.toPascal;
+            switch ('${additionalName ?? ''} ${name ?? ''} Union'.toPascal) {
+          // Avoid unions with name "Union". Add object title to union name.
+          'Union' => "${map[_titleConst] ?? ''} Union".toPascal,
+          final value => value,
+        };
         final (newName, description) = protectName(
           baseClassName,
           uniqueIfNull: true,
