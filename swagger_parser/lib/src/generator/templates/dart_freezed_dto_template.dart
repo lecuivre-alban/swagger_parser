@@ -21,7 +21,7 @@ ${dartImports(imports: dataClass.imports)}
 part '${dataClass.name.toSnake}.freezed.dart';
 part '${dataClass.name.toSnake}.g.dart';
 
-${descriptionComment(dataClass.description)}@Freezed(${dataClass.discriminator != null ? "unionKey: '${dataClass.discriminator!.propertyName}'" : ''})
+${descriptionComment(dataClass.description)}@Freezed(${dataClass.discriminator != null ? "unionKey: '${dataClass.discriminator!.propertyName.toCamel}'" : ''})
 ${dataClass.discriminator != null ? 'sealed ' : ''}class $className with _\$$className {
 ${_factories(dataClass, className)}
   \n  factory $className.fromJson(Map<String, Object?> json) => _\$${className}FromJson(json);
@@ -163,7 +163,10 @@ String _factories(UniversalComponentClass dataClass, String className) {
   final factories = <String>[];
   for (final discriminatorValue
       in dataClass.discriminator!.discriminatorValueToRefMapping.keys) {
-    final factoryName = discriminatorValue.toCamel;
+    final factoryName = switch (int.tryParse(discriminatorValue.toCamel)) {
+      final int n => 'type$n',
+      null => discriminatorValue.toCamel,
+    };
     final discriminatorRef = dataClass
         .discriminator!.discriminatorValueToRefMapping[discriminatorValue]!;
     final factoryParameters =
