@@ -705,6 +705,10 @@ class OpenApiParser {
             };
 
         final isRequired = requiredParameters.contains(propertyName);
+
+        // Nullable type if not required by schema.
+        isNullable = !isRequired || isNullable;
+
         final typeWithImport = _findType(
           propertyValue,
           name: propertyName,
