@@ -22,10 +22,7 @@ extension UniversalTypeX on UniversalType {
 
   String _questionMark(ProgrammingLanguage lang) {
     final questionMark =
-        (isRequired || wrappingCollections.isNotEmpty) && !nullable ||
-                defaultValue != null
-            ? ''
-            : '?';
+        (isRequired || wrappingCollections.isNotEmpty) && !nullable ? '' : '?';
     switch (lang) {
       case ProgrammingLanguage.dart:
         // https://github.com/trevorwang/retrofit.dart/issues/631
