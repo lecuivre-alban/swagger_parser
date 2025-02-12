@@ -198,6 +198,7 @@ class OpenApiParser {
             // List<dynamic> is not supported by Retrofit, use dynamic instead
             type.type == _objectConst ? const [] : type.wrappingCollections,
         isRequired: typeWithImport.type.isRequired,
+        nullable: typeWithImport.type.nullable,
       );
     }
 
