@@ -10,7 +10,9 @@ enum UniversalCollections {
   nullableMap,
 
   /// Nullable List collection
-  nullableList;
+  nullableList,
+
+  filter;
 
   /// Creates a [UniversalCollections]
   const UniversalCollections();
@@ -22,7 +24,17 @@ enum UniversalCollections {
           'List<',
         UniversalCollections.map ||
         UniversalCollections.nullableMap =>
-          'Map<String, '
+          'Map<String, ',
+        UniversalCollections.filter => 'List<(',
+      };
+
+  String get closingCharacter => switch (this) {
+        UniversalCollections.map ||
+        UniversalCollections.list ||
+        UniversalCollections.nullableMap ||
+        UniversalCollections.nullableList =>
+          '>',
+        UniversalCollections.filter => ', String)>',
       };
 
   /// Returns question mark for collection
@@ -30,6 +42,9 @@ enum UniversalCollections {
         UniversalCollections.nullableList ||
         UniversalCollections.nullableMap =>
           '?',
-        UniversalCollections.list || UniversalCollections.map => ''
+        UniversalCollections.list ||
+        UniversalCollections.map ||
+        UniversalCollections.filter =>
+          ''
       };
 }

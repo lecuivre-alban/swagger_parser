@@ -14,7 +14,7 @@ extension UniversalTypeX on UniversalType {
     }
     sb.write(_questionMark(lang));
     for (final collection in wrappingCollections.reversed) {
-      sb.write('>${collection.questionMark}');
+      sb.write('${collection.closingCharacter}${collection.questionMark}');
     }
 
     return sb.toString();

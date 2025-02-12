@@ -13,6 +13,20 @@ String dartFreezedDtoTemplate(
   bool generateValidator = false,
 }) {
   final className = dataClass.name.toPascal;
+
+  final freezedParams = [
+    if (dataClass.discriminator != null)
+      "unionKey: '${dataClass.discriminator!.propertyName.toCamel}'",
+    if (dataClass.customToJson != null) 'toJson: false',
+  ].join(', ');
+
+  final extrasFunctions = [
+    if (dataClass.customToJson != null) '\n\t${dataClass.customToJson}',
+  ];
+  if (extrasFunctions.isNotEmpty) {
+    extrasFunctions.insert(0, '\n\tconst $className._();');
+  }
+
   return '''
 ${generatedFileComment(
     markFileAsGenerated: markFileAsGenerated,
@@ -21,10 +35,11 @@ ${dartImports(imports: dataClass.imports)}
 part '${dataClass.name.toSnake}.freezed.dart';
 part '${dataClass.name.toSnake}.g.dart';
 
-${descriptionComment(dataClass.description)}@Freezed(${dataClass.discriminator != null ? "unionKey: '${dataClass.discriminator!.propertyName.toCamel}'" : ''})
+${descriptionComment(dataClass.description)}@Freezed($freezedParams)
 ${dataClass.discriminator != null ? 'sealed ' : ''}class $className with _\$$className {
 ${_factories(dataClass, className)}
   \n  factory $className.fromJson(Map<String, Object?> json) => _\$${className}FromJson(json);
+${extrasFunctions.join('\n')}
 ${generateValidator ? dataClass.parameters.map(_validationString).nonNulls.join() : ''}}
 ${generateValidator ? _validateMethod(className, dataClass.parameters) : ''}''';
 }

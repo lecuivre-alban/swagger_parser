@@ -247,6 +247,7 @@ class OpenApiParser {
                 ? parameter[_schemaConst] as Map<String, dynamic>
                 : parameter,
             name: parameter[_nameConst].toString(),
+            additionalName: map[_operationIdConst] as String?,
             isRequired: isRequired,
           );
 
@@ -955,8 +956,61 @@ class OpenApiParser {
     String? name,
     String? additionalName,
   }) {
+    if (map.containsKey('filters')) {
+      final (enumName, _) = protectName(
+        '$additionalName Filters Enum'.toPascal,
+        isEnum: true,
+        uniqueIfNull: true,
+      );
+
+      final filters = map['filters'] as List;
+      final items = protectEnumItemsNames(filters.map((e) => '$e'));
+      final enumClass = _getUniqueEnumClass(
+        name: enumName!,
+        items: items,
+        // ignore: avoid_dynamic_calls
+        type: (map[_anyOfConst] as List).firstWhere((e) {
+          return (e as Map).containsKey(_itemsConst);
+        })[_itemsConst][_typeConst].toString(),
+
+        defaultValue: protectDefaultValue(map[_defaultConst], isEnum: true),
+        description: null,
+      );
+
+      _enumClasses.add(enumClass);
+
+      final objectName = '$additionalName $name'.toPascal;
+
+      _objectClasses.add(
+        UniversalComponentClass(
+          name: objectName,
+          imports: {enumClass.name},
+          parameters: [
+            UniversalType(
+              type: enumClass.name,
+              name: 'filters',
+              isRequired: true,
+              wrappingCollections: const [UniversalCollections.filter],
+            ),
+          ],
+          customToJson:
+              '''List<String> toJson() => [for (final (_, v) in filters) v];''',
+        ),
+      );
+
+      return (
+        type: UniversalType(
+          type: objectName,
+          name: (name ?? enumName).toCamel,
+          jsonKey: name,
+          isRequired: false,
+          nullable: true,
+        ),
+        import: objectName,
+      );
+    }
     // Array
-    if (map.containsKey(_typeConst) && map[_typeConst] == _arrayConst) {
+    else if (map.containsKey(_typeConst) && map[_typeConst] == _arrayConst) {
       final arrayItems = map[_itemsConst] as Map<String, dynamic>;
       final (:type, :import) = _findType(
         arrayItems,
@@ -1268,6 +1322,7 @@ class OpenApiParser {
                 root: root,
                 isRequired: false,
               );
+
               ofImport = import;
               if (type.wrappingCollections.isEmpty) {
                 ofType = type.copyWith(nullable: true);

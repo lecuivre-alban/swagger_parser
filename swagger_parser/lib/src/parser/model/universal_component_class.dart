@@ -11,6 +11,7 @@ final class UniversalComponentClass extends UniversalDataClass {
     this.allOf,
     this.typeDef = false,
     this.discriminator,
+    this.customToJson,
     super.description,
   });
 
@@ -42,6 +43,9 @@ final class UniversalComponentClass extends UniversalDataClass {
   /// }
   ///  must be DateTime instead of its own class
   final bool typeDef;
+
+  // TODO find a better way to override serialization
+  final String? customToJson;
 
   @override
   bool operator ==(Object other) =>
