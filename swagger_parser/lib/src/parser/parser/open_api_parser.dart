@@ -198,6 +198,7 @@ class OpenApiParser {
             // List<dynamic> is not supported by Retrofit, use dynamic instead
             type.type == _objectConst ? const [] : type.wrappingCollections,
         isRequired: typeWithImport.type.isRequired,
+        nullable: typeWithImport.type.nullable,
       );
     }
 
@@ -1350,11 +1351,8 @@ class OpenApiParser {
       final import = ofImport;
       final defaultValue = map[_defaultConst]?.toString();
 
-      final enumType = defaultValue != null &&
-              import != null &&
-              (ofType == null || ofType.wrappingCollections.isEmpty)
-          ? type
-          : null;
+      final enumType = defaultValue != null && import != null ? type : null;
+
       final (newName, description) =
           protectName(name, description: map[_descriptionConst]?.toString());
 

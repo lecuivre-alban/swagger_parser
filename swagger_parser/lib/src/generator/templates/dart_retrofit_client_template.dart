@@ -164,8 +164,35 @@ String _required(UniversalType t) =>
     t.isRequired && t.defaultValue == null ? 'required ' : '';
 
 /// return defaultValue if have
-String _defaultValue(UniversalType t) => t.defaultValue != null
-    ? ' = '
-        '${t.wrappingCollections.isNotEmpty ? 'const ' : ''}'
-        '${t.enumType != null ? '${t.type}.${protectDefaultEnum(t.defaultValue?.toCamel)?.toCamel}' : protectDefaultValue(t.defaultValue, type: t.type)}'
-    : '';
+String _defaultValue(UniversalType t) {
+  String protectValue(String? value) {
+    if (t.enumType != null) {
+      return '${t.type}.${protectDefaultEnum(value?.toCamel)?.toCamel}';
+    } else {
+      return protectDefaultValue(value, type: t.type) ?? '';
+    }
+  }
+
+  if (t.defaultValue case final defaultValue?) {
+    var value = ' = ';
+    if (t.wrappingCollections.isNotEmpty) {
+      value += 'const ';
+    }
+
+    if (RegExp(r'(?<=\[).*(?=\])').stringMatch(defaultValue)
+        case final match?) {
+      if (match.isEmpty) {
+        value += '[]';
+      } else {
+        value += '[';
+        value += match.split(',').map(protectValue).join(', ');
+        value += ']';
+      }
+    } else {
+      value += protectValue(t.defaultValue);
+    }
+    return value;
+  } else {
+    return '';
+  }
+}
