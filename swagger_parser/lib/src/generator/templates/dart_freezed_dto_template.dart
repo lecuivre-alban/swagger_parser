@@ -171,7 +171,7 @@ String _factories(UniversalComponentClass dataClass, String className) {
         .discriminator!.discriminatorValueToRefMapping[discriminatorValue]!;
     final factoryParameters =
         dataClass.discriminator!.refProperties[discriminatorRef]!;
-    final unionItemClassName = discriminatorRef.toPascal;
+    final unionItemClassName = '$className $factoryName'.toPascal;
 
     factories.add('''
   @FreezedUnionValue('$discriminatorValue')
