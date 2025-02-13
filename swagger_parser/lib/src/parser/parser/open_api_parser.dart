@@ -712,9 +712,7 @@ class OpenApiParser {
           propertyValue,
           name: propertyName,
           additionalName: additionalName,
-          isRequired: (_apiInfo.schemaVersion == OAS.v2 && !config.useXNullable)
-              ? isRequired
-              : isRequired || !isNullable,
+          isRequired: isRequired,
         );
 
         var validation = propertyValue;
@@ -1031,7 +1029,10 @@ class OpenApiParser {
           description: description,
           format: type.format,
           jsonKey: name,
-          defaultValue: protectDefaultValue(type.defaultValue, isArray: true),
+          defaultValue: protectDefaultValue(
+            type.defaultValue ?? map[_defaultConst],
+            isArray: true,
+          ),
           isRequired: type.isRequired,
           nullable: type.nullable,
           wrappingCollections: [
