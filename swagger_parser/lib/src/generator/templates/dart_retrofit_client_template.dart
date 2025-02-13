@@ -111,7 +111,10 @@ String _addDioOptionsParameter() =>
     '    @DioOptions() RequestOptions? options,\n';
 
 String _toParameter(UniversalRequestType parameter) {
-  var parameterType = parameter.type.toSuitableType(ProgrammingLanguage.dart);
+  var parameterType = parameter.type.toSuitableType(
+    ProgrammingLanguage.dart,
+    allowNullForDefaults: true,
+  );
   // https://github.com/trevorwang/retrofit.dart/issues/631
   // https://github.com/Carapacik/swagger_parser/issues/110
   if (parameter.parameterType.isBody &&
