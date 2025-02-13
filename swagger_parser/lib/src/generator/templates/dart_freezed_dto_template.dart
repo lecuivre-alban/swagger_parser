@@ -237,7 +237,7 @@ String _parametersToString(List<UniversalType> parameters) {
         (i, e) =>
             '\n${i != 0 && (e.description?.isNotEmpty ?? false) ? '\n' : ''}${descriptionComment(e.description, tab: '    ')}'
             '${_jsonKey(e)}    ${_required(e)}'
-            '${e.toSuitableType(ProgrammingLanguage.dart)} ${e.name},',
+            '${e.toSuitableType(ProgrammingLanguage.dart, allowNullForDefaults: true)} ${e.name},',
       )
       .join();
 }

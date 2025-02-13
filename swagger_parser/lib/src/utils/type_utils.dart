@@ -4,15 +4,18 @@ import '../parser/swagger_parser_core.dart';
 /// Converts [UniversalType] to type from specified language
 extension UniversalTypeX on UniversalType {
   /// Converts [UniversalType] to concrete type of certain [ProgrammingLanguage]
-  String toSuitableType(ProgrammingLanguage lang) {
+  String toSuitableType(
+    ProgrammingLanguage lang, {
+    bool allowNullForDefaults = false,
+  }) {
     if (wrappingCollections.isEmpty) {
-      return _questionMark(lang);
+      return _questionMark(lang, allowNullForDefaults);
     }
     final sb = StringBuffer();
     for (final collection in wrappingCollections) {
       sb.write(collection.collectionsString);
     }
-    sb.write(_questionMark(lang));
+    sb.write(_questionMark(lang, allowNullForDefaults));
     for (final collection in wrappingCollections.reversed) {
       sb.write('>${collection.questionMark}');
     }
@@ -20,9 +23,16 @@ extension UniversalTypeX on UniversalType {
     return sb.toString();
   }
 
-  String _questionMark(ProgrammingLanguage lang) {
-    final questionMark =
-        (isRequired || wrappingCollections.isNotEmpty) && !nullable ? '' : '?';
+  String _questionMark(ProgrammingLanguage lang, bool allowNullForDefaults) {
+    final questionMark = allowNullForDefaults
+        // For Freezed/Retrofit, allow null to fallback on default.
+        ? (nullable && !isRequired) || defaultValue != null
+            ? '?'
+            : ''
+        : (isRequired || wrappingCollections.isNotEmpty) && !nullable ||
+                defaultValue != null
+            ? ''
+            : '?';
     switch (lang) {
       case ProgrammingLanguage.dart:
         // https://github.com/trevorwang/retrofit.dart/issues/631
