@@ -26,7 +26,7 @@ extension UniversalTypeX on UniversalType {
   String _questionMark(ProgrammingLanguage lang, bool allowNullForDefaults) {
     final questionMark = allowNullForDefaults
         // For Freezed/Retrofit, allow null to fallback on default.
-        ? (nullable && !isRequired) || defaultValue != null
+        ? nullable || (defaultValue != null || !isRequired)
             ? '?'
             : ''
         : (isRequired || wrappingCollections.isNotEmpty) && !nullable ||
