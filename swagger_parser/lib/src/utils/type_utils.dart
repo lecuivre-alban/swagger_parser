@@ -29,6 +29,7 @@ extension UniversalTypeX on UniversalType {
       case UniversalCollections.list:
       case UniversalCollections.nullableMap:
       case UniversalCollections.nullableList:
+      case UniversalCollections.filter:
         break;
     }
 
