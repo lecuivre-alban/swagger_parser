@@ -19,12 +19,17 @@ final class FillController {
   final GeneratorConfig config;
 
   /// Return [GeneratedFile] generated from given [UniversalDataClass]
-  GeneratedFile fillDtoContent(UniversalDataClass dataClass) => GeneratedFile(
+  GeneratedFile fillDtoContent(
+    UniversalDataClass dataClass, {
+    required List<UniversalEnumClass> enums,
+  }) =>
+      GeneratedFile(
         name: 'models/'
             '${config.language == ProgrammingLanguage.dart ? dataClass.name.toSnake : dataClass.name.toPascal}'
             '.${config.language.fileExtension}',
         content: config.language.dtoFileContent(
           dataClass,
+          enums: enums,
           jsonSerializer: config.jsonSerializer,
           enumsToJson: config.enumsToJson,
           unknownEnumValue: config.unknownEnumValue,
@@ -34,7 +39,10 @@ final class FillController {
       );
 
   /// Return [GeneratedFile] generated from given [UniversalRestClient]
-  GeneratedFile fillRestClientContent(UniversalRestClient restClient) {
+  GeneratedFile fillRestClientContent(
+    UniversalRestClient restClient, {
+    required List<UniversalEnumClass> enums,
+  }) {
     final postfix = config.clientPostfix ?? 'Client';
     final fileName = config.language == ProgrammingLanguage.dart
         ? '${restClient.name}_$postfix'.toSnake
@@ -47,6 +55,7 @@ final class FillController {
       content: config.language.restClientFileContent(
         restClient,
         restClient.name.toPascal + postfix.toPascal,
+        enums: enums,
         markFilesAsGenerated: config.markFilesAsGenerated,
         defaultContentType: config.defaultContentType,
         extrasParameterByDefault: config.extrasParameterByDefault,

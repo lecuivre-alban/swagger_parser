@@ -40,6 +40,7 @@ enum ProgrammingLanguage {
   /// Determines template for generating DTOs by language
   String dtoFileContent(
     UniversalDataClass dataClass, {
+    required List<UniversalEnumClass> enums,
     required JsonSerializer jsonSerializer,
     required bool enumsToJson,
     required bool unknownEnumValue,
@@ -64,7 +65,7 @@ enum ProgrammingLanguage {
             );
           }
           return switch (jsonSerializer) {
-            JsonSerializer.freezed => dartFreezedDtoTemplate(
+            JsonSerializer.freezed => DartFreezedDtoTemplate(enums).dtoTemplate(
                 dataClass,
                 markFileAsGenerated: markFilesAsGenerated,
                 generateValidator: generateValidator,
@@ -105,6 +106,7 @@ enum ProgrammingLanguage {
   String restClientFileContent(
     UniversalRestClient restClient,
     String name, {
+    required List<UniversalEnumClass> enums,
     required bool markFilesAsGenerated,
     required String defaultContentType,
     bool extrasParameterByDefault = false,
@@ -112,7 +114,7 @@ enum ProgrammingLanguage {
     bool originalHttpResponse = false,
   }) =>
       switch (this) {
-        dart => dartRetrofitClientTemplate(
+        dart => DartRetrofitTemplate(enums).clientTemplate(
             restClient: restClient,
             name: name,
             markFileAsGenerated: markFilesAsGenerated,

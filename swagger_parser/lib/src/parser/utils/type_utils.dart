@@ -100,17 +100,12 @@ String? protectDefaultValue(
     return null;
   }
 
-  if (isEnum) {
-    if (RegExp(r'(?<=\[).*(?=\])').stringMatch(nameStr) case final match?) {
-      final values = match.split(',').map((e) => e.trim()).toList();
-      return '[${protectEnumItemsNames(values).map((e) => e.name).join(', ')}]';
-    } else {
-      return protectEnumItemsNames([nameStr]).first.name;
-    }
-  }
-
   if (nameStr.startsWith('[') && nameStr.endsWith(']')) {
     return nameStr;
+  }
+
+  if (isEnum) {
+    return protectEnumItemsNames([nameStr]).first.name;
   }
 
   if (isArray) {

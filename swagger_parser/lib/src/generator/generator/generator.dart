@@ -52,10 +52,14 @@ class Generator {
   List<GeneratedFile> generateContent() {
     final fillController = FillController(config: config, info: info);
 
-    final dataClassesFiles =
-        dataClasses.map(fillController.fillDtoContent).toList();
-    final restClientFiles =
-        restClients.map(fillController.fillRestClientContent).toList();
+    final enums = dataClasses.whereType<UniversalEnumClass>().toList();
+
+    final dataClassesFiles = dataClasses.map((dataClass) {
+      return fillController.fillDtoContent(dataClass, enums: enums);
+    }).toList();
+    final restClientFiles = restClients.map((client) {
+      return fillController.fillRestClientContent(client, enums: enums);
+    }).toList();
 
     final rootClientFile = config.language == ProgrammingLanguage.dart &&
             config.rootClient &&
