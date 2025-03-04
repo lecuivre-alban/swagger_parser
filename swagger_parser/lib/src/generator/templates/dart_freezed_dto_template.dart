@@ -21,7 +21,7 @@ final class DartFreezedDtoTemplate {
 
     final freezedParams = [
       if (dataClass.discriminator != null)
-        "unionKey: '${dataClass.discriminator!.propertyName.toCamel}'",
+        "unionKey: '${dataClass.discriminator!.propertyName}'",
       if (dataClass.customToJson != null) 'toJson: false',
     ].join(', ');
 
@@ -190,7 +190,12 @@ ${generateValidator ? _validateMethod(className, dataClass.parameters) : ''}''';
       final discriminatorRef = dataClass
           .discriminator!.discriminatorValueToRefMapping[discriminatorValue]!;
       final factoryParameters =
-          dataClass.discriminator!.refProperties[discriminatorRef]!;
+          dataClass.discriminator!.refProperties[discriminatorRef]!.where((e) {
+        // Exclude parameters w/ same name as the discriminator to avoid
+        // a bug from the freezed package...
+        return (e.jsonKey ?? e.name) != dataClass.discriminator!.propertyName;
+      }).toList();
+
       final unionItemClassName = '$className $factoryName'.toPascal;
 
       factories.add('''
